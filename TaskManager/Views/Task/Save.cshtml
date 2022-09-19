@@ -1,0 +1,81 @@
+﻿@model Domain.ViewModels.TaskModel.TaskViewModel
+
+@{
+    ViewBag.Title = "Добавить задачу";
+    Layout = "_layout";
+}
+
+<div>
+    <h1 class="">Добавление задачи</h1>
+    <hr>
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Save" enctype="multipart/form-data">
+                <ul>
+                    <li>
+                        <label>Имя</label>
+                        <input class="form-control" name="Name" />
+                    </li>
+                    <li>
+                        <label>Описание</label>
+                        <input class="form-control" name="Description" />
+                    </li>
+                    <li>
+                        <label>Тип</label>
+                        <select class="form-select" name="TypeTask" id="types"></select>
+                    </li>
+                    <li>
+                        <label>Родительская задача</label>
+                        <input type="hidden" name="ParentTask" id="parentId" />
+                        <select class="form-select" id="parents">
+                            <option>-</option>
+                        </select>
+                    </li>
+                </ul>
+                <input class="btn btn-success" type="submit" value="Создать" />
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            var typesList = document.getElementById("types");
+            var parentsList = document.getElementById("parents");
+            let parents = document.getElementById('parents');
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetTaskTypes")",
+                dataType: "json",
+                success: function (msg) {
+                    msg.forEach(function (elem) {
+                        var opt = document.createElement('option');
+                        opt.value = elem;
+                        opt.innerHTML = elem;
+                        typesList.appendChild(opt);
+                    });
+                }
+            })
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetTaskParents")",
+                dataType: "json",
+                success: function (msg) {
+                    msg.forEach(function (elem) {
+                        console.log(elem);
+                        var opt = document.createElement('option');
+                        opt.value = elem;
+                        opt.innerHTML = elem;
+                        parentsList.appendChild(opt);
+                    });
+                }
+            })
+            $('#parentId').val(parents.selectedIndex);
+            $('#parents').change(function () {
+                $('#parentId').val(parents.selectedIndex);
+            });
+        });
+    </script>
+}
+
